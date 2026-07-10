@@ -42,3 +42,7 @@ yarn-error.log*
 
 # Electron
 dist-electron/
+
+# Archived/Legacy directories
+.archive_*/
+src_backup_*/
