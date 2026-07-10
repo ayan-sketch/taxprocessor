@@ -1,0 +1,377 @@
+/* Wealth Statement Full Modal Styles */
+.wealth-statement-modal .iris-wrap {
+  display: flex;
+  min-height: 100vh;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.wealth-statement-modal .data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.wealth-statement-modal .data-table th {
+  background: #23233a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.wealth-statement-modal .data-table th.right {
+  text-align: right;
+}
+
+.wealth-statement-modal .data-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12.5px;
+  color: #222;
+  vertical-align: middle;
+}
+
+.wealth-statement-modal .data-table td.code {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  width: 90px;
+}
+
+.wealth-statement-modal .data-table td.amt {
+  text-align: right;
+  width: 160px;
+}
+
+.wealth-statement-modal .data-table td input.amt-inp {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  font-size: 12.5px;
+  text-align: right;
+  background: #fff;
+  color: #222;
+  outline: none;
+}
+
+.wealth-statement-modal .data-table td input.amt-inp:hover {
+  border-color: #999;
+  background: #fafafa;
+}
+
+.wealth-statement-modal .data-table td input.amt-inp:focus {
+  border-color: #6c5fc7;
+  background: #fff;
+}
+
+.wealth-statement-modal .data-table tr.section-hd td {
+  background: #f8f8f8;
+  font-weight: 500;
+  font-size: 12px;
+  color: #666;
+  padding: 6px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.wealth-statement-modal .data-table tr.subtotal td {
+  background: #f0f4fa;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #1a3055;
+}
+
+.wealth-statement-modal .data-table tr.subtotal td.amt {
+  font-weight: 700;
+}
+
+.wealth-statement-modal .data-table tr.grand-total td {
+  background: #23233a;
+  color: #fff;
+  font-weight: 700;
+}
+
+.wealth-statement-modal .data-table tr.grand-total td.amt {
+  color: #fff;
+}
+
+.wealth-statement-modal .data-table tr.grand-total td input.amt-inp {
+  color: #fff !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.wealth-statement-modal .data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.wealth-statement-modal .data-table tr.unreconciled td {
+  background: #fffbe6;
+  color: #7a5900;
+  font-weight: 600;
+}
+
+.wealth-statement-modal .plus-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: #f9f9f9;
+  color: #444;
+  font-size: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s;
+  vertical-align: middle;
+}
+
+.wealth-statement-modal .plus-btn:hover {
+  background: #e8e4f7;
+  border-color: #6c5fc7;
+  color: #6c5fc7;
+}
+
+.wealth-statement-modal .amt-with-plus {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.wealth-statement-modal .amt-with-plus input.amt-inp {
+  background: #f5f5f5 !important;
+  border-color: #d0d0d0 !important;
+  cursor: pointer;
+}
+
+.wealth-statement-modal .amt-with-plus input.amt-inp:hover {
+  background: #ebebeb !important;
+  border-color: #999 !important;
+}
+
+.wealth-statement-modal .gift-entry td {
+  background: #fafbff;
+  font-size: 12px;
+  color: #333;
+  border-bottom: 1px solid #eef;
+}
+
+.wealth-statement-modal .gift-entry td:first-child {
+  padding-left: 36px;
+  color: #555;
+}
+
+.wealth-statement-modal .gift-entry td.amt {
+  color: #1a3055;
+  font-weight: 500;
+}
+
+.wealth-statement-modal .gift-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+
+.wealth-statement-modal .gift-edit-btn {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.wealth-statement-modal .gift-edit-btn:hover {
+  background: #d97706;
+}
+
+.wealth-statement-modal .gift-del-btn {
+  background: #ef4444;
+  color: #fff;
+}
+
+.wealth-statement-modal .gift-del-btn:hover {
+  background: #b91c1c;
+}
+
+.wealth-statement-modal .gift-row-actions {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0 }
+  to { transform: translateY(0); opacity: 1 }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(0); opacity: 1 }
+  to { transform: translateY(30px); opacity: 0 }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1 }
+  to { opacity: 0 }
+}
+
+@media print {
+  .wealth-statement-modal .sidebar,
+  .wealth-statement-modal .top-tabs,
+  .wealth-statement-modal .search-bar,
+  .wealth-statement-modal #search-hint,
+  .wealth-statement-modal .plus-btn,
+  .wealth-statement-modal .amt-with-plus .plus-btn,
+  .wealth-statement-modal .gift-row-actions,
+  .wealth-statement-modal .unreconciled-bar {
+    display: none !important;
+  }
+
+  .wealth-statement-modal .iris-wrap {
+    display: block !important;
+    border: none !important;
+    border-radius: 0 !important;
+    min-height: unset !important;
+  }
+
+  .wealth-statement-modal .main-panel {
+    background: #fff !important;
+    display: block !important;
+  }
+
+  .wealth-statement-modal .content-area {
+    background: #fff !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .wealth-statement-modal #section-expenses,
+  .wealth-statement-modal #section-assets,
+  .wealth-statement-modal #section-recon {
+    display: block !important;
+    margin-bottom: 18px;
+  }
+
+  .wealth-statement-modal tr[data-gift="true"],
+  .wealth-statement-modal tr[data-sub="true"],
+  .wealth-statement-modal .gift-entry,
+  .wealth-statement-modal .sub-entry {
+    display: table-row !important;
+  }
+
+  .wealth-statement-modal tr.print-empty {
+    display: none !important;
+  }
+
+  .wealth-statement-modal .data-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    page-break-inside: auto;
+    margin-bottom: 0;
+  }
+
+  .wealth-statement-modal .data-table thead {
+    display: table-header-group;
+  }
+
+  .wealth-statement-modal .data-table tr {
+    page-break-inside: avoid;
+  }
+
+  .wealth-statement-modal .data-table th {
+    background: #23233a !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10px !important;
+    padding: 6px 9px !important;
+  }
+
+  .wealth-statement-modal .data-table td {
+    padding: 4px 9px !important;
+    font-size: 10.5px !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+  }
+
+  .wealth-statement-modal .data-table tr.subtotal td {
+    background: #e8eef8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 600 !important;
+  }
+
+  .wealth-statement-modal .data-table tr.grand-total td {
+    background: #23233a !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 700 !important;
+  }
+
+  .wealth-statement-modal .data-table tr.unreconciled td {
+    background: #fffbe6 !important;
+    color: #7a5900 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 600 !important;
+  }
+
+  .wealth-statement-modal .data-table tr.gift-entry td,
+  .wealth-statement-modal .data-table tr.sub-entry td {
+    background: #f4f6ff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10px !important;
+  }
+
+  .wealth-statement-modal .data-table td input.amt-inp {
+    border: none !important;
+    background: transparent !important;
+    color: #000 !important;
+    font-size: 10.5px !important;
+    padding: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    text-align: right !important;
+  }
+
+  .wealth-statement-modal .data-table tr.grand-total td input.amt-inp {
+    color: #fff !important;
+  }
+
+  .wealth-statement-modal .amt-with-plus {
+    display: block !important;
+  }
+
+  .wealth-statement-modal .amt-with-plus input.amt-inp {
+    width: 100% !important;
+  }
+
+  .wealth-statement-modal #print-header {
+    display: block !important;
+  }
+}

@@ -1,0 +1,1442 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif}
+:root{
+--nav:#1a3055;--nav2:#17375e;--accent:#6c5fc7;--border:#e0e0e0;
+--bg:#f5f5f5;--white:#fff;--text:#222;--muted:#666;--head:#23233a;
+--active-bg:#6c5fc7;--active-text:#fff;--tblhead:#23233a;
+--subtotal-bg:#f0f4fa;--subtotal-color:#1a3055;
+}
+.iris-wrap{display:flex;min-height:100vh;border:1px solid var(--border);border-radius:8px;overflow:hidden;font-size:13px}
+.sidebar{width:210px;background:var(--nav2);flex-shrink:0;display:flex;flex-direction:column}
+.sb-title{background:var(--nav);color:#fff;font-size:12px;font-weight:500;padding:10px 14px;letter-spacing:.3px}
+.sb-item{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;color:rgba(255,255,255,.8);cursor:pointer;font-size:12.5px;border-left:3px solid transparent}
+.sb-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.sb-item.sub{padding-left:22px;font-size:12px;color:rgba(255,255,255,.72)}
+.sb-item.sub.active{background:var(--active-bg);color:var(--active-text);border-left-color:#fff;font-weight:500}
+.sb-item.sub:hover{background:rgba(255,255,255,.1)}
+.sb-divider{height:1px;background:rgba(255,255,255,.1);margin:2px 0}
+.sb-section-hd{padding:6px 14px 2px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px}
+.sb-arrow{font-size:10px;opacity:.6}
+.main-panel{flex:1;display:flex;flex-direction:column;background:var(--bg)}
+.top-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto}
+.top-tab{padding:9px 14px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;flex-shrink:0}
+.top-tab.active{color:var(--nav);font-weight:500;border-bottom-color:var(--nav)}
+.top-tab:hover:not(.active){background:#f7f7f7}
+.content-area{flex:1;padding:14px 16px;overflow-y:auto}
+.search-bar{margin-bottom:12px}
+.search-bar input{width:320px;padding:7px 12px;border:1px solid var(--border);border-radius:4px;font-size:12.5px;color:var(--text);outline:none;background:#fff}
+.search-bar input:focus{border-color:#6c5fc7}
+.data-table{width:100%;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.data-table th{background:var(--tblhead);color:#fff;font-size:12px;font-weight:500;padding:9px 12px;text-align:left}
+.data-table th.right{text-align:right}
+.data-table td{padding:7px 12px;border-bottom:1px solid #f0f0f0;font-size:12.5px;color:var(--text);vertical-align:middle}
+.data-table td.code{color:var(--muted);font-size:12px;text-align:center;width:90px}
+.data-table td.amt{text-align:right;width:160px}
+.data-table td input.amt-inp{width:100%;padding:4px 8px;border:1px solid #d0d0d0;border-radius:3px;font-size:12.5px;text-align:right;background:#fff;color:var(--text);outline:none}
+.data-table td input.amt-inp:hover{border-color:#999;background:#fafafa}
+.data-table td input.amt-inp:focus{border-color:#6c5fc7;background:#fff}
+.data-table tr.section-hd td{background:#f8f8f8;font-weight:500;font-size:12px;color:var(--muted);padding:6px 12px;border-bottom:1px solid #eee}
+.data-table tr.subtotal td{background:var(--subtotal-bg);font-weight:600;font-size:12.5px;color:var(--subtotal-color)}
+.data-table tr.subtotal td.amt{font-weight:700}
+.data-table tr.grand-total td{background:var(--tblhead);color:#fff;font-weight:700}
+.data-table tr.grand-total td.amt{color:#fff}
+.data-table tr.grand-total td input.amt-inp{color:#fff !important;background:transparent !important;border-color:transparent !important}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr.unreconciled td{background:#fffbe6;color:#7a5900;font-weight:600}
+/* Plus button */
+.plus-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #bbb;border-radius:3px;background:#f9f9f9;color:#444;font-size:15px;cursor:pointer;flex-shrink:0;transition:background .15s,border-color .15s;vertical-align:middle}
+.plus-btn:hover{background:#e8e4f7;border-color:#6c5fc7;color:#6c5fc7}
+.amt-with-plus{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.amt-with-plus input.amt-inp{background:#f5f5f5 !important;border-color:#d0d0d0 !important;cursor:pointer}
+.amt-with-plus input.amt-inp:hover{background:#ebebeb !important;border-color:#999 !important}
+/* Gift sub-rows */
+.data-table tr.gift-entry td{background:#fafbff;font-size:12px;color:#333;border-bottom:1px solid #eef}
+.data-table tr.gift-entry td:first-child{padding-left:36px;color:#555}
+.data-table tr.gift-entry td.amt{color:#1a3055;font-weight:500}
+.gift-action-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;border:none;cursor:pointer;font-size:13px;flex-shrink:0;transition:opacity .15s}
+.gift-edit-btn{background:#f59e0b;color:#fff}
+.gift-edit-btn:hover{background:#d97706}
+.gift-del-btn{background:#ef4444;color:#fff}
+.gift-del-btn:hover{background:#b91c1c}
+.gift-row-actions{display:inline-flex;gap:4px;margin-left:8px;vertical-align:middle}
+/* Modal overlay */
+.gm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease}
+.gm-overlay.open{display:flex;animation:fadeIn .3s ease forwards}
+.gm-box{background:#fff;border-radius:8px;width:420px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.22);font-family:'Segoe UI',sans-serif;font-size:13px;overflow:hidden;transform:translateY(-30px);opacity:0;transition:transform .3s ease,opacity .3s ease}
+.gm-overlay.open .gm-box{animation:slideDown .3s ease forwards}
+.gm-overlay.closing{animation:fadeOut .3s ease forwards}
+.gm-overlay.closing .gm-box{animation:slideUp .3s ease forwards}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes slideDown{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes slideUp{from{transform:translateY(0);opacity:1}to{transform:translateY(30px);opacity:0}}
+.gm-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #e5e5e5}
+.gm-header span{font-weight:600;font-size:14px;color:#23233a}
+.gm-close{cursor:pointer;color:#888;font-size:18px;line-height:1;border:none;background:none}
+.gm-close:hover{color:#333}
+.gm-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.gm-radios{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.gm-radios label{display:flex;align-items:center;gap:5px;cursor:pointer;color:#333;font-size:12.5px}
+.gm-radios input[type=radio]{accent-color:#6c5fc7;width:15px;height:15px}
+.gm-field{display:flex;flex-direction:column;gap:4px}
+.gm-field input,.gm-field textarea{border:1px solid #d0d0d0;border-radius:4px;padding:8px 11px;font-size:13px;color:#222;outline:none;font-family:inherit;resize:vertical}
+.gm-field input:focus,.gm-field textarea:focus{border-color:#6c5fc7}
+.gm-field textarea{min-height:72px}
+.gm-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 18px;border-top:1px solid #e5e5e5;background:#f7f7f7}
+.gm-btn{padding:7px 22px;border-radius:4px;border:none;font-size:13px;cursor:pointer;font-family:inherit}
+.gm-btn.cancel{background:#e0e0e0;color:#444}
+.gm-btn.cancel:hover{background:#ccc}
+.gm-btn.save{background:#23233a;color:#fff}
+.gm-btn.save:hover{background:#6c5fc7}
+
+/* ── Global Unreconciled Amount sticky bar ── */
+.unreconciled-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  border-top: 2px solid transparent;
+  transition: background .25s, border-color .25s, color .25s;
+  flex-shrink: 0;
+}
+.unreconciled-bar.bar-red {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+.unreconciled-bar.bar-green {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #166534;
+}
+.unreconciled-bar .bar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.unreconciled-bar .bar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.bar-red  .bar-dot { background: #ef4444; }
+.bar-green .bar-dot { background: #22c55e; }
+.unreconciled-bar .bar-code {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: .65;
+  margin-left: 4px;
+}
+.unreconciled-bar .bar-amount {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* Give content-area bottom room so the sticky bar never covers the last row */
+.content-area { padding-bottom: 56px; }
+
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════
+   PRINT STYLES  –  116 Wealth Statement
+   ═══════════════════════════════════════════════════════ */
+@media print {
+
+  /* ── Layout: strip chrome, go full-width ── */
+  @page { margin: 15mm 12mm; size: A4 portrait; }
+
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; }
+
+  /* Hide everything that isn't the statement content */
+  .sidebar,
+  .top-tabs,
+  .search-bar,
+  #search-hint,
+  .plus-btn,
+  .amt-with-plus .plus-btn,
+  .gift-row-actions,
+  .row-actions,
+  .gm-overlay,
+  .unreconciled-bar { display: none !important; }
+
+  /* Strip the app shell – make it look like a plain document */
+  .iris-wrap {
+    display: block !important;
+    border: none !important;
+    border-radius: 0 !important;
+    min-height: unset !important;
+  }
+
+  .main-panel {
+    background: #fff !important;
+    display: block !important;
+  }
+
+  .content-area {
+    background: #fff !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* ── Force ALL three sections to print sequentially ── */
+  #section-expenses,
+  #section-assets,
+  #section-recon { display: block !important; margin-bottom: 18px; }
+
+  /* ── Sub-entry rows (Gift / Adjustment entries) must stay visible ── */
+  tr[data-gift="true"],
+  tr[data-sub="true"],
+  .gift-entry,
+  .sub-entry { display: table-row !important; }
+
+  /* ── Skip rows that have NO amount (empty inputs + no sub-entries) ── */
+  tr.print-empty { display: none !important; }
+
+  /* ── Tables ── */
+  .data-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    page-break-inside: auto;
+    margin-bottom: 0;
+  }
+
+  .data-table thead { display: table-header-group; }
+
+  /* Prevent individual rows from being cut across page breaks */
+  .data-table tr { page-break-inside: avoid; }
+
+  .data-table th {
+    background: #23233a !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10px !important;
+    padding: 6px 9px !important;
+  }
+
+  .data-table td {
+    padding: 4px 9px !important;
+    font-size: 10.5px !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+  }
+
+  /* Subtotal / grand-total rows keep their colours */
+  .data-table tr.subtotal td {
+    background: #e8eef8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 600 !important;
+  }
+
+  .data-table tr.grand-total td {
+    background: #23233a !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 700 !important;
+  }
+
+  .data-table tr.unreconciled td {
+    background: #fffbe6 !important;
+    color: #7a5900 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: 600 !important;
+  }
+
+  /* Sub-entry rows */
+  .data-table tr.gift-entry td,
+  .data-table tr.sub-entry td {
+    background: #f4f6ff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10px !important;
+  }
+
+  /* ── Inputs look like plain text ── */
+  .data-table td input.amt-inp {
+    border: none !important;
+    background: transparent !important;
+    color: #000 !important;
+    font-size: 10.5px !important;
+    padding: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    text-align: right !important;
+  }
+
+  /* Grand-total inputs stay white text */
+  .data-table tr.grand-total td input.amt-inp { color: #fff !important; }
+
+  /* amt-with-plus: just show the input, no flex gap issues */
+  .amt-with-plus {
+    display: block !important;
+  }
+  .amt-with-plus input.amt-inp {
+    width: 100% !important;
+  }
+
+  /* ── Section print headers ── */
+  .print-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a3055;
+    padding: 8px 0 4px;
+    border-bottom: 2px solid #1a3055;
+    margin-bottom: 6px;
+    letter-spacing: .3px;
+  }
+
+  /* ── Document header (shown only on print) ── */
+  #print-header { display: block !important; }
+}
+
+/* Hidden on screen, visible on print */
+#print-header {
+  display: none;
+  text-align: center;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #1a3055;
+  padding-bottom: 10px;
+}
+#print-header h1 { font-size: 15px; color: #1a3055; margin-bottom: 3px; }
+#print-header p  { font-size: 10.5px; color: #555; }
+</style>
+
+<div class="iris-wrap">
+<div class="sidebar">
+  <div class="sb-title" id="ws-title" onclick="toggleWealthMenu()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none">
+    <span>116 – Wealth Statement</span>
+    <span id="ws-arrow" style="font-size:11px;transition:transform .25s;display:inline-block">▼</span>
+  </div>
+  <div id="ws-submenu" style="overflow:hidden;max-height:0;transition:max-height .3s ease">
+    <div class="sb-item sub active" onclick="switchSection('expenses',this)">– Personal Expenses</div>
+    <div class="sb-item sub" onclick="switchSection('assets',this)">– Personal Assets / Liabilities</div>
+    <div class="sb-item sub" onclick="switchSection('recon',this)">– Reconciliation of Net Assets</div>
+  </div>
+</div>
+
+<div class="main-panel">
+  <div class="top-tabs">
+    <div class="top-tab active" id="tab-data" onclick="switchTab('data',this)">Data</div>
+    <div class="top-tab" id="tab-wealth" onclick="switchTab('wealth',this)">Wealth Statement</div>
+    <div class="top-tab" id="tab-print" onclick="triggerPrint()" style="margin-left:auto;color:#1a3055;font-weight:500;display:flex;align-items:center;gap:5px">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Statement
+    </div>
+  </div>
+  <div class="content-area">
+    <!-- Document header: hidden on screen, shown at top of printout -->
+    <div id="print-header">
+      <h1>116 – Wealth Statement</h1>
+      <p>Federal Board of Revenue (FBR) – IRIS Portal &nbsp;|&nbsp; Printed: <span id="print-date"></span></p>
+    </div>
+    <div class="search-bar" style="display:flex;align-items:center;gap:8px">
+      <input type="text" id="search-inp" placeholder="Search across all sections by Code/Description..." oninput="doSearch()" style="width:380px">
+      <span id="search-hint" style="font-size:11px;color:#6c5fc7;display:none">Showing results from all sections</span>
+    </div>
+    <div id="section-expenses"></div>
+    <div id="exp-zero-warning" style="display:none;margin-top:8px;padding:9px 14px;background:#fef2f2;border:1px solid #ef4444;border-radius:5px;font-size:12.5px;color:#991b1b;font-weight:500">
+      &#9888; Personal Expenses (7089) total is <b>zero</b>. Please enter at least one expense amount.
+    </div>
+    <div id="section-assets" style="display:none"></div>
+    <div id="section-recon" style="display:none"></div>
+  </div>
+  <!-- ── Global sticky unreconciled amount bar ── -->
+  <div class="unreconciled-bar bar-red" id="unreconciled-bar">
+    <div class="bar-label">
+      <span class="bar-dot"></span>
+      <span>Unreconciled Amount <span style="font-weight:400;opacity:.8">(Must be 0)</span></span>
+      <span class="bar-code">703000</span>
+    </div>
+    <span class="bar-amount" id="unreconciled-bar-amount">0</span>
+  </div>
+</div>
+</div>
+
+<!-- Gift Modal -->
+<div class="gm-overlay" id="giftModal">
+  <div class="gm-box">
+    <div class="gm-header">
+      <span id="gm-title">Gift</span>
+      <button class="gm-close" onclick="closeGiftModal()">&#x2715;</button>
+    </div>
+    <div class="gm-body">
+      <div class="gm-radios">
+        <label><input type="radio" name="gmIdType" value="CNIC/NICOP" checked onchange="updateGmLabel()"> CNIC/NICOP</label>
+        <label><input type="radio" name="gmIdType" value="NTN" onchange="updateGmLabel()"> NTN</label>
+        <label><input type="radio" name="gmIdType" value="POC" onchange="updateGmLabel()"> POC/Foreigner's Passport No.</label>
+      </div>
+      <div class="gm-field">
+        <label id="gm-idno-label" style="font-size:12px;color:#555">CNIC/NICOP*</label>
+        <input type="text" id="gm-idno" placeholder="Enter 13-digit CNIC without dashes" inputmode="numeric" maxlength="13" oninput="onGmIdnoInput(this)">
+        <span id="gm-idno-hint" style="font-size:11px;color:#6c5fc7;margin-top:2px">Enter CNIC without dashes (13 digits, e.g. 3520212345673)</span>
+      </div>
+      <div class="gm-field"><label style="font-size:12px;color:#555">Name*</label><input type="text" id="gm-name" placeholder="Name*"></div>
+      <div class="gm-field"><label style="font-size:12px;color:#555">Description*</label><textarea id="gm-desc" placeholder="Description*"></textarea></div>
+      <div class="gm-field"><label style="font-size:12px;color:#555">Amount*</label><input type="text" id="gm-amount" placeholder="Amount*"></div>
+    </div>
+      <div id="gm-error" style="display:none;color:#b91c1c;font-size:12px;background:#fef2f2;border:1px solid #ef4444;border-radius:4px;padding:7px 10px;margin-top:2px"></div>
+    </div>
+    <div class="gm-footer">
+      <button class="gm-btn cancel" onclick="closeGiftModal()">CANCEL</button>
+      <button class="gm-btn save" id="gm-save-btn" onclick="saveGiftEntry()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Content Modal (for Adjustments in Inflows 7034 / Inheritance 7036) -->
+<div class="gm-overlay" id="contentModal">
+  <div class="gm-box" style="width:440px">
+    <div class="gm-header">
+      <span id="cm-title">Add Content</span>
+      <button class="gm-close" onclick="closeContentModal()">&#x2715;</button>
+    </div>
+    <div class="gm-body">
+      <div class="gm-field">
+        <label style="font-size:12px;color:#555">Contents*</label>
+        <textarea id="cm-contents" placeholder="Contents*" style="min-height:110px"></textarea>
+      </div>
+      <div class="gm-field">
+        <label style="font-size:12px;color:#555">Amount*</label>
+        <input type="text" id="cm-amount" placeholder="Amount*">
+      </div>
+    </div>
+    <div class="gm-footer">
+      <button class="gm-btn cancel" onclick="closeContentModal()">CANCEL</button>
+      <button class="gm-btn save" id="cm-save-btn" onclick="saveContentEntry()">SUBMIT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Modal -->
+<div class="gm-overlay" id="assetModal">
+  <div class="gm-box" style="width:440px">
+    <div class="gm-header">
+      <span id="am-title">Add Asset Entry</span>
+      <button class="gm-close" onclick="closeAssetModal()">&#x2715;</button>
+    </div>
+    <div class="gm-body" id="am-body">
+      <!-- Dynamic fields will be inserted here -->
+    </div>
+    <div class="gm-footer">
+      <button class="gm-btn cancel" onclick="closeAssetModal()">CANCEL</button>
+      <button class="gm-btn save" id="am-save-btn" onclick="saveAssetEntry()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const fmtPKR = v => { if(v===0) return ''; const abs = Math.round(Math.abs(v)).toLocaleString('en-PK'); return v<0 ? '-'+abs : abs; };
+const parseV = v => parseFloat((v||'').toString().replace(/,/g,'')) || 0;
+
+const EXPENSES = [
+  {code:'7089', desc:'Personal Expenses', isTotal:true, totalKey:'personalExpTotal'},
+  {code:'7051', desc:'Rent', sub:true},
+  {code:'7052', desc:'Rates / Taxes / Charge / Cess', sub:true},
+  {code:'7055', desc:'Vehicle Running / Maintenance', sub:true},
+  {code:'7056', desc:'Travelling', sub:true},
+  {code:'7058', desc:'Electricity', sub:true},
+  {code:'7059', desc:'Water', sub:true},
+  {code:'7060', desc:'Gas', sub:true},
+  {code:'7061', desc:'Telephone', sub:true},
+  {code:'7066', desc:'Asset Insurance / Security', sub:true},
+  {code:'7070', desc:'Medical', sub:true},
+  {code:'7071', desc:'Educational', sub:true},
+  {code:'7072', desc:'Club', sub:true},
+  {code:'7073', desc:'Functions / Gatherings', sub:true},
+  {code:'7076', desc:'Donation, Zakat, Annuity, Profit on Debt, Life Insurance Premium, etc.', sub:true},
+  {code:'7087', desc:'Other Personal / Household Expenses', sub:true},
+  {code:'7088', desc:'Contribution in Expenses by Family Members', sub:true, deduct:true},
+];
+
+const ASSETS = [
+  {code:'7001', desc:'Agricultural Property', hasPlus:true},
+  {code:'7002', desc:'Commercial, Industrial, Residential Property (Non-Business)', hasPlus:true},
+  {code:'7003', desc:'Business Capital', hasPlus:true},
+  {code:'7004', desc:'Equipment (Non-Business)'},
+  {code:'7005', desc:'Animal (Non-Business)'},
+  {code:'7006', desc:'Investment (Non-Business) (Account / Annuity / Bond / Certificate / Debenture / Deposit / Fund / Instrument / Policy / Share / Stock / Unit, etc.)', hasPlus:true},
+  {code:'7007', desc:'Debt (Non-Business) (Advance / Debt / Deposit / Prepayment / Receivable / Security)', hasPlus:true},
+  {code:'7008', desc:'Motor Vehicle (Non-Business)', hasPlus:true},
+  {code:'7009', desc:'Precious Possession', hasPlus:true},
+  {code:'7010', desc:'Household Effect'},
+  {code:'7011', desc:'Personal Item'},
+  {code:'7012', desc:'Cash (Non-Business)'},
+  {code:'7013', desc:'Any Other Asset', hasPlus:true},
+  {code:'7013a', desc:'  Any Other Asset – Easypaisa Account', indent:true},
+  {code:'7013b', desc:'  Any Other Asset – Allied Bank', indent:true},
+  {code:'7014', desc:'Assets held on others name (including non-filer Spouse/Dependents)', hasPlus:true},
+  {code:'7015', desc:'Total Assets Inside Pakistan', isSubTotal:true, totalKey:'assetsInside'},
+  {code:'7016', desc:'Assets held outside Pakistan', hasPlus:true},
+  {code:'7018', desc:'Capital or voting rights in foreign company'},
+  {code:'7020', desc:'Total Assets held outside Pakistan', isSubTotal:true, totalKey:'assetsOutside'},
+  {code:'7019', desc:'Total Assets', isGrandTotal:true, totalKey:'totalAssets'},
+  {code:'7021', desc:'Credit (Non-Business) (Advance / Borrowing / Credit / Deposit / Loan / Mortgage / Overdraft / Payable)', hasPlus:true},
+  {code:'7022', desc:'Foreign Liabilities'},
+  {code:'7029', desc:'Total Liabilities', isSubTotal:true, totalKey:'totalLiabilities'},
+  {code:'703001', desc:'Net Assets Current Year', isNetAssets:true},
+];
+
+const RECON = [
+  {code:'703001', desc:'Net Assets Current Year', isGrandTotal:true, totalKey:'netAssetsCY'},
+  {code:'703002', desc:'Net Assets Previous Year'},
+  {code:'703003', desc:'Increase / Decrease in Assets', isSubTotal:true, totalKey:'increaseAssets'},
+  {code:'7049', desc:'Inflows', isSubTotal:true, totalKey:'totalInflows'},
+  {code:'7031', desc:'Income Declared as per Return for the year subject to Normal Tax', indent:true},
+  {code:'7032', desc:'Income Declared as per Return for the year Exempt from Tax', indent:true},
+  {code:'7033', desc:'Income Attributable to Receipts, etc. Declared as per Return for the year subject to Final / Fixed Tax', indent:true},
+  {code:'7034', desc:'Adjustments in Inflows', indent:true, hasContent:true},
+  {code:'7035', desc:'Foreign Remittance', indent:true},
+  {code:'7036', desc:'Inheritance', indent:true, hasContent:true},
+  {code:'7037', desc:'Gift', indent:true},
+  {code:'7038', desc:'Gain on Disposal of Assets, excluding Capital Gain on Immovable Property', indent:true},
+  {code:'7039', desc:'Income Attributable to Receipts (Builders/Developers)', indent:true},
+  {code:'7048', desc:'Others', indent:true},
+  {code:'7043', desc:'Deemed Income declared as per Return for the year', indent:true},
+  {code:'7099', desc:'Outflows', isSubTotal:true, totalKey:'totalOutflows'},
+  {code:'7089', desc:'Personal Expenses', indent:true, readonlyFromExp:true},
+  {code:'7098', desc:'Adjustments in Outflows', indent:true},
+  {code:'7091', desc:'Gift', indent:true},
+  {code:'7092', desc:'Loss on Disposal of Assets', indent:true},
+  {code:'703000', desc:'Unreconciled Amount', isUnreconciled:true, totalKey:'unreconciled'},
+  {code:'703004', desc:'Assets Transferred / Sold / Gifted / Donated during the year'},
+];
+
+let values = {};
+let currentSection = 'expenses';
+let currentTab = 'data';
+
+function getVal(code){ return parseV(values[code] || 0); }
+
+function calcExpenses(){
+  let sub=0;
+  EXPENSES.forEach(r=>{
+    if(r.sub && r.code!=='7088') sub += getVal(r.code);
+  });
+  sub -= getVal('7088');
+  values['__expTotal'] = sub;
+  const el = document.getElementById('disp-7089');
+  if(el) el.value = sub>0 ? fmtPKR(sub) : '';
+
+  // Show warning when expenses total is zero (only if user has touched the section)
+  const expWarn = document.getElementById('exp-zero-warning');
+  if(expWarn){
+    // Only warn if at least one expense input has been interacted with (has a value)
+    const anyFilled = document.querySelectorAll('#section-expenses input.amt-inp:not([readonly])');
+    const hasAnyInput = Array.from(anyFilled).some(i => i.value.trim() !== '');
+    expWarn.style.display = (hasAnyInput && sub === 0) ? '' : 'none';
+  }
+
+  calcRecon();
+}
+
+function calcAssets(){
+  const insideCodes = ['7001','7002','7003','7004','7005','7006','7007','7008','7009','7010','7011','7012','7013','7013a','7013b','7014'];
+  let inside = insideCodes.reduce((s,c)=>s+getVal(c),0);
+  values['__assetsInside'] = inside;
+  const disp7015 = document.getElementById('disp-7015');
+  if(disp7015) disp7015.value = inside>0?fmtPKR(inside):'';
+
+  const outsideCodes = ['7016','7018'];
+  let outside = outsideCodes.reduce((s,c)=>s+getVal(c),0);
+  values['__assetsOutside'] = outside;
+  const disp7020 = document.getElementById('disp-7020');
+  if(disp7020) disp7020.value = outside>0?fmtPKR(outside):'';
+
+  const total = inside+outside;
+  values['__totalAssets'] = total;
+  const disp7019 = document.getElementById('disp-7019');
+  if(disp7019) disp7019.value = total>0?fmtPKR(total):'';
+
+  const liabCodes = ['7021','7022'];
+  let liab = liabCodes.reduce((s,c)=>s+getVal(c),0);
+  values['__totalLiabilities'] = liab;
+  const disp7029 = document.getElementById('disp-7029');
+  if(disp7029) disp7029.value = liab>0?fmtPKR(liab):'';
+
+  const netCA = total - liab;
+  values['__netAssetsCA'] = netCA;
+
+  // Show Net Assets Current Year (703001) under Total Liabilities in Assets section
+  const dispAssetsNet = document.getElementById('disp-assets-703001');
+  if(dispAssetsNet) dispAssetsNet.value = netCA !== 0 ? fmtPKR(netCA) : '';
+
+  calcRecon();
+}
+
+function calcRecon(){
+  const netCY = values['__netAssetsCA'] || 0;
+  const el703001 = document.getElementById('disp-703001');
+  if(el703001) el703001.value = netCY>0?fmtPKR(netCY):'';
+
+  const prevY = getVal('703002');
+  const increase = netCY - prevY;
+  values['__increaseAssets'] = increase;
+  const elInc = document.getElementById('disp-703003');
+  if(elInc) elInc.value = increase!==0?fmtPKR(increase):'';
+
+  const inflowCodes = ['7031','7032','7033','7034','7035','7036','7037','7038','7039','7048','7043'];
+  let inflows = inflowCodes.reduce((s,c)=>s+getVal(c),0);
+  inflows += increase;
+  values['__totalInflows'] = inflows;
+  const elInf = document.getElementById('disp-7049');
+  if(elInf) elInf.value = inflows!==0?fmtPKR(inflows):'';
+
+  const expTotal = values['__expTotal'] || 0;
+  const el7089r = document.getElementById('disp-recon-7089');
+  if(el7089r) el7089r.value = expTotal>0?fmtPKR(expTotal):'';
+
+  const outflowEditable = ['7098','7091','7092'];
+  let outflows = expTotal + outflowEditable.reduce((s,c)=>s+getVal(c),0);
+  values['__totalOutflows'] = outflows;
+  const elOut = document.getElementById('disp-7099');
+  if(elOut) elOut.value = outflows!==0?fmtPKR(outflows):'';
+
+  const unreconciled = inflows - outflows;
+  values['__unreconciled'] = unreconciled;
+  const elUnr = document.getElementById('disp-703000');
+  if(elUnr) elUnr.value = unreconciled!==0?fmtPKR(unreconciled):'';
+
+  // Update the global sticky bar every time recon recalculates
+  updateUnreconciledBar(unreconciled);
+}
+
+// ── Global sticky bar updater ─────────────────────────────────────────────────
+function updateUnreconciledBar(amount) {
+  const bar    = document.getElementById('unreconciled-bar');
+  const amtEl  = document.getElementById('unreconciled-bar-amount');
+  if (!bar || !amtEl) return;
+
+  const isZero = (amount === 0);
+  bar.classList.toggle('bar-green', isZero);
+  bar.classList.toggle('bar-red',  !isZero);
+
+  // Show formatted amount; display '0' explicitly when zero so it's unambiguous
+  amtEl.textContent = isZero ? '0' : fmtPKR(amount);
+}
+
+// ── recalcAll: convenience wrapper so any section change re-runs everything ──
+function recalcAll() {
+  calcExpenses();   // → calls calcRecon internally
+  calcAssets();     // → calls calcRecon internally
+  // calcRecon is already called by both above; call once more for direct recon edits
+  calcRecon();
+}
+
+function buildExpenses(){
+  let html = '<table class="data-table"><thead><tr><th>Description</th><th class="code">Code</th><th class="right">Amount</th></tr></thead><tbody>';
+  EXPENSES.forEach(r=>{
+    if(r.isTotal){
+      html += `<tr class="subtotal" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td>${r.desc}</td><td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder=""></td></tr>`;
+    } else {
+      html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="${r.deduct?'color:#b91c1c':''}">${r.desc}${r.deduct?' <span style="font-size:11px;color:#b91c1c">(deducted)</span>':''}</td>
+        <td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="inp-${r.code}" placeholder="" oninput="onInput(this,'${r.code}','exp')"></td></tr>`;
+    }
+  });
+  html += '</tbody></table>';
+  document.getElementById('section-expenses').innerHTML = html;
+}
+
+function buildAssets(){
+  let html = '<table class="data-table"><thead><tr><th>Description</th><th class="code">Code</th><th class="right">Amount</th></tr></thead><tbody>';
+  ASSETS.forEach(r=>{
+    if(r.isGrandTotal){
+      html += `<tr class="grand-total" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="color:#fff">${r.desc}</td><td class="code" style="color:#fff">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder="" style="color:#fff"></td></tr>`;
+    } else if(r.isSubTotal){
+      html += `<tr class="subtotal" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td>${r.desc}</td><td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder=""></td></tr>`;
+    } else if(r.hasPlus){
+      html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="${r.indent?'padding-left:28px;color:var(--muted)':''}">${r.desc}</td>
+        <td class="code">${r.code}</td>
+        <td class="amt">
+          <div class="amt-with-plus">
+            <input class="amt-inp" id="inp-${r.code}" placeholder="" readonly
+              onclick="openAssetModal('${r.code}')"
+              style="flex:1;min-width:0;cursor:pointer">
+            <button class="plus-btn" onclick="openAssetModal('${r.code}')" title="Add Entry">+</button>
+          </div>
+        </td></tr>`;
+    } else if(r.isNetAssets){
+      html += `<tr class="subtotal" data-row data-desc="${r.desc}" data-code="${r.code}" style="border-top:2px solid #1a3055">
+        <td style="color:var(--subtotal-color);font-weight:700">${r.desc}</td>
+        <td class="code" style="color:var(--subtotal-color)">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-assets-703001" readonly placeholder="" style="font-weight:700;color:var(--subtotal-color)"></td></tr>`;
+    } else {
+      html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="${r.indent?'padding-left:28px;color:var(--muted)':''}">${r.desc}</td>
+        <td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="inp-${r.code}" placeholder="" oninput="onInput(this,'${r.code}','asset')"></td></tr>`;
+    }
+  });
+  html += '</tbody></table>';
+  document.getElementById('section-assets').innerHTML = html;
+}
+
+function buildRecon(){
+  let html = '<table class="data-table"><thead><tr><th>Description</th><th class="code">Code</th><th class="right">Amount</th></tr></thead><tbody>';
+  RECON.forEach(r=>{
+    if(r.isGrandTotal){
+      html += `<tr class="grand-total" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="color:#fff">${r.desc}</td><td class="code" style="color:#fff">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder="" style="color:#fff"></td></tr>`;
+    } else if(r.isSubTotal){
+      html += `<tr class="subtotal" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td>${r.desc}</td><td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder=""></td></tr>`;
+    } else if(r.isUnreconciled){
+      html += `<tr class="unreconciled" data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td>${r.desc}</td><td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-${r.code}" readonly placeholder=""></td></tr>`;
+    } else if(r.readonlyFromExp){
+      html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td style="${r.indent?'padding-left:28px':''}">${r.desc}</td>
+        <td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="disp-recon-${r.code}" readonly placeholder=""></td></tr>`;
+    } else if(r.code==='703002'){
+      html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+        <td>${r.desc}</td><td class="code">${r.code}</td>
+        <td class="amt"><input class="amt-inp" id="inp-${r.code}" placeholder="" oninput="onInput(this,'${r.code}','recon')"></td></tr>`;
+    } else {
+      const isGift    = (r.code === '7037' || r.code === '7091');
+      const isContent = r.hasContent === true;
+      if(isGift){
+        html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+          <td style="${r.indent?'padding-left:28px;color:var(--muted)':''}">${r.desc}</td>
+          <td class="code">${r.code}</td>
+          <td class="amt">
+            <div class="amt-with-plus">
+              <input class="amt-inp" id="inp-${r.code}" placeholder="" readonly
+                onclick="openGiftModal('${r.code}')"
+                style="flex:1;min-width:0;cursor:pointer;background:transparent;caret-color:transparent;border-color:transparent">
+              <button class="plus-btn" onclick="openGiftModal('${r.code}')" title="Add Gift">+</button>
+            </div>
+          </td></tr>`;
+      } else if(isContent){
+        html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+          <td style="${r.indent?'padding-left:28px;color:var(--muted)':''}">${r.desc}</td>
+          <td class="code">${r.code}</td>
+          <td class="amt">
+            <div class="amt-with-plus">
+              <input class="amt-inp" id="inp-${r.code}" placeholder="" readonly
+                onclick="openContentModal('${r.code}')"
+                style="flex:1;min-width:0;cursor:pointer;background:transparent;caret-color:transparent;border-color:transparent">
+              <button class="plus-btn" onclick="openContentModal('${r.code}')" title="Add Content">+</button>
+            </div>
+          </td></tr>`;
+      } else {
+        html += `<tr data-row data-desc="${r.desc}" data-code="${r.code}">
+          <td style="${r.indent?'padding-left:28px;color:var(--muted)':''}">${r.desc}</td>
+          <td class="code">${r.code}</td>
+          <td class="amt"><input class="amt-inp" id="inp-${r.code}" placeholder="" oninput="onInput(this,'${r.code}','recon')"></td></tr>`;
+      }
+    }
+  });
+  html += '</tbody></table>';
+  document.getElementById('section-recon').innerHTML = html;
+  calcRecon();
+}
+
+function onInput(el, code, section){
+  let raw = el.value;
+
+  // Expenses and assets must be non-negative (liabilities are positive; formula subtracts them)
+  const allowNeg = (section === 'recon');
+  const isNeg = allowNeg && raw.startsWith('-');
+
+  // Strip everything except digits and decimal points
+  raw = raw.replace(/[^0-9.]/g, '');
+
+  // Collapse multiple decimal points: keep only the first one
+  const dotIdx = raw.indexOf('.');
+  if(dotIdx !== -1){
+    raw = raw.slice(0, dotIdx + 1) + raw.slice(dotIdx + 1).replace(/\./g, '');
+  }
+
+  // Re-apply the leading minus only for recon fields
+  if(isNeg) raw = '-' + raw;
+
+  // Only update DOM if the value actually changed (prevents cursor-jump issues)
+  if(el.value !== raw) el.value = raw;
+
+  const num = parseFloat(raw) || 0;
+  values[code] = num;
+  el.style.color = num < 0 ? '#b91c1c' : '';
+  if(section==='exp') calcExpenses();
+  else if(section==='asset') calcAssets();
+  else if(section==='recon') calcRecon();
+}
+
+function switchSection(sec, el){
+  document.querySelectorAll('.sb-item.sub').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  currentSection = sec;
+  // Clear search when switching sections
+  const searchInp = document.getElementById('search-inp');
+  if(searchInp) searchInp.value = '';
+  doSearch();
+}
+
+function switchTab(tab, el){
+  document.querySelectorAll('.top-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  currentTab = tab;
+  if(tab === 'wealth'){
+    if(!wsMenuOpen){
+      const menu = document.getElementById('ws-submenu');
+      const arrow = document.getElementById('ws-arrow');
+      wsMenuOpen = true;
+      menu.style.maxHeight = '200px';
+      arrow.style.transform = 'rotate(180deg)';
+    }
+  }
+}
+
+function doSearch(){
+  const q = (document.getElementById('search-inp').value||'').toLowerCase().trim();
+  const allSections = ['expenses','assets','recon'];
+  const hint = document.getElementById('search-hint');
+  if(!q){
+    if(hint) hint.style.display='none';
+    allSections.forEach(s=>{
+      const sec = document.getElementById('section-'+s);
+      sec.style.display = s===currentSection ? '' : 'none';
+      // FIX 2: reset data-row rows but preserve gift sub-rows explicitly
+      sec.querySelectorAll('tr[data-row]').forEach(row=>{
+        if(row.getAttribute('data-gift') === 'true') {
+          row.style.display = 'table-row'; // gift sub-rows always stay visible
+        } else {
+          row.style.display = '';
+        }
+      });
+    });
+    return;
+  }
+  if(hint) hint.style.display='';
+  allSections.forEach(s=>{
+    const sec = document.getElementById('section-'+s);
+    let sectionHasMatch = false;
+    sec.querySelectorAll('tr[data-row]').forEach(row=>{
+      // FIX 2: never hide gift sub-rows during text search
+      if(row.getAttribute('data-gift') === 'true'){
+        row.style.display = 'table-row';
+        return;
+      }
+      const desc = (row.getAttribute('data-desc')||'').toLowerCase();
+      const code_val = (row.getAttribute('data-code')||'').toLowerCase();
+      const match = desc.includes(q)||code_val.includes(q);
+      row.style.display = match ? '' : 'none';
+      if(match) sectionHasMatch = true;
+    });
+    sec.style.display = sectionHasMatch ? '' : 'none';
+  });
+}
+
+let wsMenuOpen = false;
+function toggleWealthMenu(){
+  const menu = document.getElementById('ws-submenu');
+  const arrow = document.getElementById('ws-arrow');
+  wsMenuOpen = !wsMenuOpen;
+  menu.style.maxHeight = wsMenuOpen ? '200px' : '0';
+  arrow.style.transform = wsMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+buildExpenses();
+buildAssets();
+buildRecon();
+
+// ── Gift modal state ──────────────────────────────────────────────────────────
+let giftCurrentCode = null;
+let giftEditId = null;  // null = new entry, number = editing existing
+const giftEntries = { '7037': [], '7091': [] };
+
+function openGiftModal(code, editId) {
+  giftCurrentCode = code;
+  giftEditId = editId || null;
+
+  const isEdit = giftEditId !== null;
+  const label = code === '7037' ? 'Gift – Inflow (7037)' : 'Gift – Outflow (7091)';
+  document.getElementById('gm-title').textContent = label;
+  document.getElementById('gm-save-btn').textContent = isEdit ? 'UPDATE' : 'SAVE';
+
+  if(isEdit){
+    const entry = giftEntries[code].find(e => e.id === editId);
+    if(!entry) return;
+    // Set radio
+    document.querySelectorAll('input[name=gmIdType]').forEach(r => { r.checked = (r.value === entry.idType); });
+    updateGmLabel();
+    document.getElementById('gm-idno').value = entry.idno;
+    document.getElementById('gm-name').value = entry.name;
+    document.getElementById('gm-desc').value = entry.desc;
+    document.getElementById('gm-amount').value = entry.amt;
+  } else {
+    document.querySelectorAll('input[name=gmIdType]')[0].checked = true;
+    updateGmLabel();
+    document.getElementById('gm-idno').value = '';
+    document.getElementById('gm-name').value = '';
+    document.getElementById('gm-desc').value = '';
+    document.getElementById('gm-amount').value = '';
+  }
+  const errEl = document.getElementById('gm-error');
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+  // Show the hint fresh for new entries
+  if (!giftEditId) {
+    const hint = document.getElementById('gm-idno-hint');
+    if (hint) { hint.style.display = ''; }
+  }
+  document.getElementById('giftModal').classList.add('open');
+}
+
+function closeGiftModal() {
+  const modal = document.getElementById('giftModal');
+  modal.classList.add('closing');
+  setTimeout(() => {
+    modal.classList.remove('open', 'closing');
+    giftCurrentCode = null;
+    giftEditId = null;
+  }, 300);
+}
+
+function updateGmLabel() {
+  const sel = document.querySelector('input[name=gmIdType]:checked').value;
+  const inp  = document.getElementById('gm-idno');
+  const hint = document.getElementById('gm-idno-hint');
+  const lbl  = document.getElementById('gm-idno-label');
+
+  if (sel === 'CNIC/NICOP') {
+    lbl.textContent    = 'CNIC/NICOP*';
+    inp.placeholder    = 'Enter 13-digit CNIC without dashes';
+    inp.maxLength      = 13;
+    inp.inputMode      = 'numeric';
+    if (hint) { hint.textContent = 'Enter CNIC without dashes (13 digits, e.g. 3520212345673)'; hint.style.display = inp.value.length === 13 ? 'none' : ''; }
+  } else if (sel === 'NTN') {
+    lbl.textContent    = 'NTN*';
+    inp.placeholder    = 'Enter 8-digit NTN without dashes';
+    inp.maxLength      = 8;
+    inp.inputMode      = 'numeric';
+    if (hint) { hint.textContent = 'Enter NTN without dashes (8 digits, e.g. 12345678)'; hint.style.display = inp.value.length === 8 ? 'none' : ''; }
+  } else {
+    lbl.textContent    = "POC/Foreigner's Passport No.*";
+    inp.placeholder    = "Passport or POC number";
+    inp.maxLength      = 20;
+    inp.inputMode      = 'text';
+    if (hint) { hint.style.display = 'none'; }
+  }
+  inp.value = '';  // clear when switching type
+}
+
+function onGmIdnoInput(el) {
+  // Allow digits only (strip everything else live)
+  const sel = document.querySelector('input[name=gmIdType]:checked')?.value || 'CNIC/NICOP';
+  if (sel === 'CNIC/NICOP' || sel === 'NTN') {
+    el.value = el.value.replace(/[^0-9]/g, '');
+  }
+  // Hide hint once correct length is reached
+  const hint = document.getElementById('gm-idno-hint');
+  if (!hint) return;
+  const required = sel === 'CNIC/NICOP' ? 13 : sel === 'NTN' ? 8 : 0;
+  hint.style.display = (required === 0 || el.value.length >= required) ? 'none' : '';
+}
+
+function saveGiftEntry() {
+  const idType = document.querySelector('input[name=gmIdType]:checked').value;
+  const idno   = document.getElementById('gm-idno').value.trim();
+  const name   = document.getElementById('gm-name').value.trim();
+  const desc   = document.getElementById('gm-desc').value.trim();
+  const amt    = parseFloat(document.getElementById('gm-amount').value) || 0;
+  const errEl  = document.getElementById('gm-error');
+
+  // Field presence check
+  if (!idno || !name || !desc || !amt) {
+    errEl.textContent = 'Please fill in all required fields.';
+    errEl.style.display = '';
+    return;
+  }
+
+  // CNIC/NTN format validation (digits only, no dashes)
+  if (idType === 'CNIC/NICOP') {
+    if (!/^[0-9]{13}$/.test(idno)) {
+      errEl.textContent = 'CNIC must be exactly 13 digits without dashes (e.g. 3520212345673).';
+      errEl.style.display = '';
+      document.getElementById('gm-idno').focus();
+      return;
+    }
+  } else if (idType === 'NTN') {
+    if (!/^[0-9]{8}$/.test(idno)) {
+      errEl.textContent = 'NTN must be exactly 8 digits without dashes (e.g. 12345678).';
+      errEl.style.display = '';
+      document.getElementById('gm-idno').focus();
+      return;
+    }
+  }
+  errEl.style.display = 'none';
+
+  if(giftEditId !== null){
+    // Update existing entry
+    const idx = giftEntries[giftCurrentCode].findIndex(e => e.id === giftEditId);
+    if(idx !== -1){
+      giftEntries[giftCurrentCode][idx] = { idType, idno, name, desc, amt, id: giftEditId };
+    }
+  } else {
+    // New entry
+    const entry = { idType, idno, name, desc, amt, id: Date.now() };
+    giftEntries[giftCurrentCode].push(entry);
+  }
+
+  // Capture code BEFORE closeGiftModal() nullifies giftCurrentCode
+  const savedCode = giftCurrentCode;
+  closeGiftModal();
+
+  // FIX 3: force section-recon visible so insertAdjacentElement is immediately rendered
+  const reconSec = document.getElementById('section-recon');
+  if(reconSec) reconSec.style.display = '';
+  currentSection = 'recon';
+  document.querySelectorAll('.sb-item.sub').forEach(e => e.classList.remove('active'));
+  const reconNavItem = document.querySelector('.sb-item.sub[onclick*="recon"]');
+  if(reconNavItem) reconNavItem.classList.add('active');
+
+  renderGiftEntries(savedCode);
+  recalcGiftTotal(savedCode);
+}
+
+function deleteGiftEntry(code, id) {
+  giftEntries[code] = giftEntries[code].filter(e => e.id !== id);
+  renderGiftEntries(code);
+  recalcGiftTotal(code);
+}
+
+function renderGiftEntries(code) {
+  // Ensure recon section is built
+  const reconSection = document.getElementById('section-recon');
+  if (!reconSection) return;
+  const giftRow = reconSection.querySelector('tr[data-code="' + code + '"]');
+  if (!giftRow) return;
+
+  // Remove existing sub-rows for this code
+  reconSection.querySelectorAll('.gift-sub-' + code).forEach(r => r.remove());
+
+  const entries = giftEntries[code];
+  // Insert in reverse so they appear in correct order (oldest first under the gift row)
+  entries.slice().reverse().forEach(entry => {
+    const tr = document.createElement('tr');
+    tr.className = 'gift-entry gift-sub-' + code;
+    tr.setAttribute('data-row', '');          // FIX 1: needed by doSearch
+    tr.setAttribute('data-gift', 'true');     // marker to skip text-search filtering
+    tr.style.display = 'table-row';
+    const idLabel = entry.idType === 'CNIC/NICOP' ? 'CNIC' : entry.idType === 'NTN' ? 'NTN' : 'POC';
+    // Format: Gift - {idno} - {NAME} - {desc}
+    const rowLabel = 'Gift - ' + entry.idno + ' - ' + entry.name + ' - ' + entry.desc;
+    tr.innerHTML =
+      '<td style="padding-left:28px;font-size:12px;color:#333">' + rowLabel + '</td>' +
+      '<td class="code" style="font-size:12px;color:#888">' + code + '</td>' +
+      '<td class="amt">' +
+        '<div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">' +
+          '<span style="color:#1a3055;font-weight:600;font-size:12.5px">' + Math.round(entry.amt).toLocaleString('en-PK') + '</span>' +
+          '<button class="gift-action-btn gift-edit-btn" onclick="openGiftModal(\'' + code + '\',' + entry.id + ')" title="Edit">&#9998;</button>' +
+          '<button class="gift-action-btn gift-del-btn" onclick="deleteGiftEntry(\'' + code + '\',' + entry.id + ')" title="Delete">&#10005;</button>' +
+        '</div>' +
+      '</td>';
+    giftRow.insertAdjacentElement('afterend', tr);
+  });
+}
+
+function recalcGiftTotal(code) {
+  const total = giftEntries[code].reduce((s, e) => s + e.amt, 0);
+  const inp = document.getElementById('inp-' + code);
+  if (inp) {
+    inp.value = total > 0 ? Math.round(total).toLocaleString('en-PK') : '';
+    values[code] = total;
+    calcRecon();
+  }
+}
+
+// Gift modal closes only via Close (×) or Cancel button
+
+
+// ── Content modal state (for 7034 Adjustments in Inflows, 7036 Inheritance) ──
+let contentCurrentCode = null;
+let contentEditId = null;
+const contentEntries = { '7034': [], '7036': [] };
+
+function openContentModal(code, editId) {
+  contentCurrentCode = code;
+  contentEditId = editId || null;
+
+  const isEdit = contentEditId !== null;
+  const labels = { '7034': 'Adjustments in Inflows', '7036': 'Inheritance' };
+  document.getElementById('cm-title').textContent = (isEdit ? 'Edit' : 'Add') + ' Content – ' + (labels[code] || code);
+  document.getElementById('cm-save-btn').textContent = isEdit ? 'UPDATE' : 'SUBMIT';
+
+  if(isEdit){
+    const entry = contentEntries[code].find(e => e.id === editId);
+    if(!entry) return;
+    document.getElementById('cm-contents').value = entry.contents;
+    document.getElementById('cm-amount').value = entry.amt;
+  } else {
+    document.getElementById('cm-contents').value = '';
+    document.getElementById('cm-amount').value = '';
+  }
+  document.getElementById('contentModal').classList.add('open');
+}
+
+function closeContentModal() {
+  const modal = document.getElementById('contentModal');
+  modal.classList.add('closing');
+  setTimeout(() => {
+    modal.classList.remove('open', 'closing');
+    contentCurrentCode = null;
+    contentEditId = null;
+  }, 300);
+}
+
+function saveContentEntry() {
+  const contents = document.getElementById('cm-contents').value.trim();
+  const amt      = parseFloat(document.getElementById('cm-amount').value) || 0;
+
+  if (!contents || !amt) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  if(contentEditId !== null){
+    const idx = contentEntries[contentCurrentCode].findIndex(e => e.id === contentEditId);
+    if(idx !== -1){
+      contentEntries[contentCurrentCode][idx] = { contents, amt, id: contentEditId };
+    }
+  } else {
+    contentEntries[contentCurrentCode].push({ contents, amt, id: Date.now() });
+  }
+
+  const savedCode = contentCurrentCode;
+  closeContentModal();
+
+  // Switch to recon section so rows are visible immediately
+  const reconSec = document.getElementById('section-recon');
+  if(reconSec) reconSec.style.display = '';
+  currentSection = 'recon';
+  document.querySelectorAll('.sb-item.sub').forEach(e => e.classList.remove('active'));
+  const reconNavItem = document.querySelector('.sb-item.sub[onclick*="recon"]');
+  if(reconNavItem) reconNavItem.classList.add('active');
+
+  renderContentEntries(savedCode);
+  recalcContentTotal(savedCode);
+}
+
+function deleteContentEntry(code, id) {
+  contentEntries[code] = contentEntries[code].filter(e => e.id !== id);
+  renderContentEntries(code);
+  recalcContentTotal(code);
+}
+
+function renderContentEntries(code) {
+  const reconSection = document.getElementById('section-recon');
+  if (!reconSection) return;
+  const parentRow = reconSection.querySelector('tr[data-code="' + code + '"]');
+  if (!parentRow) return;
+
+  // Remove existing sub-rows
+  reconSection.querySelectorAll('.content-sub-' + code).forEach(r => r.remove());
+
+  const entries = contentEntries[code];
+  entries.slice().reverse().forEach(entry => {
+    const tr = document.createElement('tr');
+    tr.className = 'gift-entry content-sub-' + code;  // reuse gift-entry styling
+    tr.setAttribute('data-row', '');
+    tr.setAttribute('data-gift', 'true');  // treated same as gift by doSearch
+    tr.style.display = 'table-row';
+
+    const label = (code === '7034' ? 'Adjustments in Inflows' : 'Inheritance') + ' - ' + entry.contents;
+    tr.innerHTML =
+      '<td style="padding-left:28px;font-size:12px;color:#333">' + label + '</td>' +
+      '<td class="code" style="font-size:12px;color:#888">' + code + '</td>' +
+      '<td class="amt">' +
+        '<div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">' +
+          '<span style="color:#1a3055;font-weight:600;font-size:12.5px">' + Math.round(entry.amt).toLocaleString('en-PK') + '</span>' +
+          '<button class="gift-action-btn gift-edit-btn" onclick="openContentModal(\'' + code + '\',' + entry.id + ')" title="Edit">&#9998;</button>' +
+          '<button class="gift-action-btn gift-del-btn" onclick="deleteContentEntry(\'' + code + '\',' + entry.id + ')" title="Delete">&#10005;</button>' +
+        '</div>' +
+      '</td>';
+    parentRow.insertAdjacentElement('afterend', tr);
+  });
+}
+
+function recalcContentTotal(code) {
+  const total = contentEntries[code].reduce((s, e) => s + e.amt, 0);
+  const inp = document.getElementById('inp-' + code);
+  if (inp) {
+    inp.value = total > 0 ? Math.round(total).toLocaleString('en-PK') : '';
+    values[code] = total;
+    calcRecon();
+  }
+}
+
+// Content modal closes only via Close (×) or Cancel button
+
+// ── Print ─────────────────────────────────────────────────────────────────────
+function triggerPrint(){
+  // Stamp today's date in the print header
+  document.getElementById('print-date').textContent = new Date().toLocaleDateString('en-PK', {
+    day:'2-digit', month:'long', year:'numeric'
+  });
+
+  // Mark rows with no amount as .print-empty so @media print hides them.
+  // We check every normal data row (not subtotals/grand-totals/sub-entries).
+  document.querySelectorAll(
+    '#section-expenses tr[data-row], #section-assets tr[data-row], #section-recon tr[data-row]'
+  ).forEach(row => {
+    // Never hide sub-entry rows (gift / adjustment children) or total rows
+    const isSub   = row.getAttribute('data-gift')==='true' || row.getAttribute('data-sub')==='true';
+    const isTotal = row.classList.contains('subtotal') ||
+                    row.classList.contains('grand-total') ||
+                    row.classList.contains('unreconciled');
+    if(isSub || isTotal){ row.classList.remove('print-empty'); return; }
+
+    // Check every input in this row for a non-empty value.
+    // A field containing '0' is explicitly filled — only a completely blank field is empty.
+    const inputs = row.querySelectorAll('input.amt-inp');
+    const hasValue = Array.from(inputs).some(inp => {
+      const v = inp.value.trim();
+      return v !== '';   // '0', '-5', '100' all pass; only truly blank strings are hidden
+    });
+    if(hasValue){
+      row.classList.remove('print-empty');
+    } else {
+      row.classList.add('print-empty');
+    }
+  });
+
+  window.print();
+}
+
+// ── Asset modal state ──────────────────────────────────────────────────────────
+let assetCurrentCode = null;
+let assetEditId = null;
+const assetEntries = {
+  '7001': [], '7002': [], '7003': [], '7006': [], '7007': [], 
+  '7008': [], '7009': [], '7013': [], '7014': [], '7016': [], '7021': []
+};
+
+// Asset field configurations
+const assetFieldConfigs = {
+  '7001': [ // Agricultural Property
+    {id: 'am-property', label: 'Property*', type: 'textarea', placeholder: 'Property address / description', height: '40px'},
+    {id: 'am-desc', label: 'Description*', type: 'textarea', placeholder: 'Additional description'},
+    {id: 'am-amount', label: 'Amount (PKR)*', type: 'input', placeholder: 'Enter amount'}
+  ],
+  '7002': [ // Commercial, Industrial, Residential Property (Non-Business)
+    {id: 'am-property', label: 'Property*', type: 'textarea', placeholder: 'Property address / description', height: '40px'},
+    {id: 'am-desc', label: 'Description*', type: 'textarea', placeholder: 'Additional description'},
+    {id: 'am-amount', label: 'Amount (PKR)*', type: 'input', placeholder: 'Enter amount'}
+  ],
+  '7003': [ // Business Capital
+    {id: 'am-name', label: 'Name*', type: 'input', placeholder: 'Business / entity name'},
+    {id: 'am-amount', label: 'Amount (PKR)*', type: 'input', placeholder: 'Enter amount'}
+  ],
+  'default': [
+    {id: 'am-desc', label: 'Description*', type: 'textarea', placeholder: 'Description*'},
+    {id: 'am-amount', label: 'Amount (PKR)*', type: 'input', placeholder: 'Enter amount'}
+  ]
+};
+
+function openAssetModal(code, editId) {
+  assetCurrentCode = code;
+  assetEditId = editId || null;
+
+  const isEdit = assetEditId !== null;
+  const assetDesc = ASSETS.find(a => a.code === code)?.desc || code;
+  document.getElementById('am-title').textContent = (isEdit ? 'Edit' : 'Add') + ' – ' + assetDesc;
+  document.getElementById('am-save-btn').textContent = isEdit ? 'UPDATE' : 'SAVE';
+
+  // Build dynamic fields
+  const fields = assetFieldConfigs[code] || assetFieldConfigs['default'];
+  let html = '';
+  fields.forEach(field => {
+    html += `<div class="gm-field">
+      <label style="font-size:12px;color:#555">${field.label}</label>`;
+    if(field.type === 'textarea'){
+      const height = field.height || '90px';
+      html += `<textarea id="${field.id}" placeholder="${field.placeholder}" style="min-height:${height}"></textarea>`;
+    } else {
+      html += `<input type="text" id="${field.id}" placeholder="${field.placeholder}">`;
+    }
+    html += `</div>`;
+  });
+  document.getElementById('am-body').innerHTML = html;
+
+  if(isEdit){
+    const entry = assetEntries[code].find(e => e.id === editId);
+    if(!entry) return;
+    if(code === '7001' || code === '7002'){
+      document.getElementById('am-property').value = entry.property || '';
+      document.getElementById('am-desc').value = entry.desc || '';
+    } else if(code === '7003'){
+      document.getElementById('am-name').value = entry.name || '';
+    } else {
+      document.getElementById('am-desc').value = entry.desc || '';
+    }
+    // Amount field is present in all configs now
+    const amtField = document.getElementById('am-amount');
+    if(amtField) amtField.value = entry.amt > 0 ? entry.amt : '';
+  }
+  document.getElementById('assetModal').classList.add('open');
+}
+
+function closeAssetModal() {
+  const modal = document.getElementById('assetModal');
+  modal.classList.add('closing');
+  setTimeout(() => {
+    modal.classList.remove('open', 'closing');
+    assetCurrentCode = null;
+    assetEditId = null;
+  }, 300);
+}
+
+function saveAssetEntry() {
+  let desc, amt, property, name;
+
+  if(assetCurrentCode === '7001' || assetCurrentCode === '7002'){
+    property = document.getElementById('am-property').value.trim();
+    desc = document.getElementById('am-desc').value.trim();
+    amt  = parseFloat(document.getElementById('am-amount').value) || 0;
+
+    if (!property || !desc || !amt) {
+      alert('Please fill in all required fields (Property, Description, and Amount).');
+      return;
+    }
+  } else if(assetCurrentCode === '7003'){
+    name = document.getElementById('am-name').value.trim();
+    amt  = parseFloat(document.getElementById('am-amount').value) || 0;
+
+    if (!name || !amt) {
+      alert('Please fill in all required fields (Name and Amount).');
+      return;
+    }
+  } else {
+    desc = document.getElementById('am-desc').value.trim();
+    amt  = parseFloat(document.getElementById('am-amount').value) || 0;
+
+    if (!desc || !amt) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+  }
+
+  if(assetEditId !== null){
+    const idx = assetEntries[assetCurrentCode].findIndex(e => e.id === assetEditId);
+    if(idx !== -1){
+      if(assetCurrentCode === '7001' || assetCurrentCode === '7002'){
+        assetEntries[assetCurrentCode][idx] = { property, desc, amt, id: assetEditId };
+      } else if(assetCurrentCode === '7003'){
+        assetEntries[assetCurrentCode][idx] = { name, amt, id: assetEditId };
+      } else {
+        assetEntries[assetCurrentCode][idx] = { desc, amt, id: assetEditId };
+      }
+    }
+  } else {
+    if(assetCurrentCode === '7001' || assetCurrentCode === '7002'){
+      assetEntries[assetCurrentCode].push({ property, desc, amt, id: Date.now() });
+    } else if(assetCurrentCode === '7003'){
+      assetEntries[assetCurrentCode].push({ name, amt, id: Date.now() });
+    } else {
+      assetEntries[assetCurrentCode].push({ desc, amt, id: Date.now() });
+    }
+  }
+
+  const savedCode = assetCurrentCode;
+  closeAssetModal();
+
+  // Switch to assets section
+  const assetsSec = document.getElementById('section-assets');
+  if(assetsSec) assetsSec.style.display = '';
+  currentSection = 'assets';
+  document.querySelectorAll('.sb-item.sub').forEach(e => e.classList.remove('active'));
+  const assetsNavItem = document.querySelector('.sb-item.sub[onclick*="assets"]');
+  if(assetsNavItem) assetsNavItem.classList.add('active');
+
+  renderAssetEntries(savedCode);
+  recalcAssetTotal(savedCode);
+}
+
+function deleteAssetEntry(code, id) {
+  assetEntries[code] = assetEntries[code].filter(e => e.id !== id);
+  renderAssetEntries(code);
+  recalcAssetTotal(code);
+}
+
+function renderAssetEntries(code) {
+  const assetsSection = document.getElementById('section-assets');
+  if (!assetsSection) return;
+  const parentRow = assetsSection.querySelector('tr[data-code="' + code + '"]');
+  if (!parentRow) return;
+
+  // Remove existing sub-rows
+  assetsSection.querySelectorAll('.asset-sub-' + code).forEach(r => r.remove());
+
+  const entries = assetEntries[code];
+  entries.slice().reverse().forEach(entry => {
+    const tr = document.createElement('tr');
+    tr.className = 'gift-entry asset-sub-' + code;
+    tr.setAttribute('data-row', '');
+    tr.setAttribute('data-gift', 'true');
+    tr.style.display = 'table-row';
+
+    let label;
+    if(code === '7001' || code === '7002'){
+      // Agricultural Property or Commercial Property - show property and description
+      label = entry.property + ' - ' + entry.desc;
+    } else if(code === '7003'){
+      // Business Capital - show name only
+      label = entry.name;
+    } else {
+      label = entry.desc;
+    }
+
+    tr.innerHTML =
+      '<td style="padding-left:28px;font-size:12px;color:#333">' + label + '</td>' +
+      '<td class="code" style="font-size:12px;color:#888">' + code + '</td>' +
+      '<td class="amt">' +
+        '<div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">' +
+          '<span style="color:#1a3055;font-weight:600;font-size:12.5px">' + (entry.amt > 0 ? Math.round(entry.amt).toLocaleString('en-PK') : '0') + '</span>' +
+          '<button class="gift-action-btn gift-edit-btn" onclick="openAssetModal(\'' + code + '\',' + entry.id + ')" title="Edit">&#9998;</button>' +
+          '<button class="gift-action-btn gift-del-btn" onclick="deleteAssetEntry(\'' + code + '\',' + entry.id + ')" title="Delete">&#10005;</button>' +
+        '</div>' +
+      '</td>';
+    parentRow.insertAdjacentElement('afterend', tr);
+  });
+}
+
+function recalcAssetTotal(code) {
+  const total = assetEntries[code].reduce((s, e) => s + e.amt, 0);
+  const inp = document.getElementById('inp-' + code);
+  if (inp) {
+    inp.value = total > 0 ? Math.round(total).toLocaleString('en-PK') : '';
+    values[code] = total;
+    calcAssets();
+  }
+}
+</script>

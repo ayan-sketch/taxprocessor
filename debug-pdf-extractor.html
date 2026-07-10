@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Text Extractor - Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .highlight {
+            background: yellow;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Text Extractor - Debug Tool</h1>
+    <p>Select your PDF file to see the exact extracted text:</p>
+    <input type="file" id="fileInput" accept=".pdf">
+    <button onclick="extractText()">Extract Text</button>
+    <button onclick="copyText()">Copy Full Text</button>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+        let extractedFullText = '';
+
+        window.extractText = async function() {
+            const fileInput = document.getElementById('fileInput');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultsDiv.innerHTML = '<div class="result">Please select a PDF file first.</div>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultsDiv.innerHTML = '<div class="result">Processing...</div>';
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                let fullText = '';
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items
+                        .map(item => item.str)
+                        .join(' ')
+                        .replace(/\s+/g, ' ');
+                    fullText += pageText + '\n';
+                }
+                
+                extractedFullText = fullText;
+                
+                // Highlight key fields
+                let displayText = fullText.substring(0, 2000);
+                displayText = displayText.replace(/(Name\s*:?\s*[A-Z\s]+)/gi, '<span class="highlight">$1</span>');
+                displayText = displayText.replace(/(Registration\s+No\s*:?\s*\d+)/gi, '<span class="highlight">$1</span>');
+                displayText = displayText.replace(/(Tax\s+Year\s*:?\s*\d{4})/gi, '<span class="highlight">$1</span>');
+                
+                resultsDiv.innerHTML = `
+                    <h3>Extracted Text (First 2000 characters with highlights):</h3>
+                    <div class="result">${displayText}</div>
+                    
+                    <h3>Full Text Length: ${fullText.length} characters</h3>
+                    <p>Yellow highlights show Name, Registration No, and Tax Year patterns</p>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="result">Error: ${error.message}</div>`;
+            }
+        };
+
+        window.copyText = function() {
+            if (extractedFullText) {
+                navigator.clipboard.writeText(extractedFullText);
+                alert('Full text copied to clipboard!');
+            } else {
+                alert('Please extract text first!');
+            }
+        };
+    </script>
+</body>
+</html>
