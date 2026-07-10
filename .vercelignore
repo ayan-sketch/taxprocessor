@@ -1,0 +1,39 @@
+# Vite & Electron files
+vite.config.js
+electron.js
+preload.js
+electron-start.bat
+start-all-services.bat
+start-browser.bat
+start-electron-only.bat
+start-electron.bat
+start.bat
+api-server.js
+email-service.js
+pdf-extraction-server.js
+
+# Python files
+*.py
+
+# Test files  
+tests/
+debug-pdf-extractor.html
+
+# Data files
+*.json
+*.xlsx
+*.xls
+*.csv
+*.patch
+
+# Directories
+website design/
+Wealth statement/
+templete/
+client data Register/
+.claude-plugin/
+.claude/
+
+# Root level docs
+*.md
+!README.md
