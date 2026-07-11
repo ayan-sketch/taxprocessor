@@ -1,9 +1,18 @@
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Tax Processor</h1>
-        <p className="text-xl text-muted-foreground">
+    <main style={{
+      display: "flex",
+      minHeight: "100vh",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1rem",
+    }}>
+      <div style={{ textAlign: "center" }}>
+        <h1 style={{ fontSize: "2.25rem", fontWeight: "bold", marginBottom: "1rem" }}>
+          Tax Processor
+        </h1>
+        <p style={{ fontSize: "1.25rem", color: "#666" }}>
           Welcome to the tax processing system
         </p>
       </div>

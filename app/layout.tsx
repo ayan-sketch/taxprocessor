@@ -17,8 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-background">
-      <body className="bg-background text-foreground min-h-screen">{children}</body>
+    <html lang="en">
+      <body style={{ minHeight: "100vh" }}>
+        {children}
+      </body>
     </html>
   );
 }
